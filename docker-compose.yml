@@ -11,5 +11,4 @@ services:
     ports:
       - 15000:7689
     mem_limit: 5g
-    entrypoint: /bin/bash /app/docker_entry_point.sh server test_training parse_plaintext
 
