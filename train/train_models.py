@@ -12,6 +12,7 @@ import glob
 from shutil import copyfile, rmtree
 import re
 from distutils.util import strtobool
+import platform
 
 thisdir=os.path.dirname(os.path.realpath(__file__))
 
@@ -117,8 +118,10 @@ def train_all(args):
             sys.exit()
 
         copy_lemmatizer(args) # copy the latest lemmatizer under correct name
-
-        status = os.system("cat {train} | python3 {workdir}/../build_lemma_cache.py > models_{name}/Lemmatizer/lemma_cache.tsv".format(train=args.train_file, workdir=thisdir, name=args.name)) # build lemma cache
+        if platform.system() == 'Windows':
+            status = os.system("type {train} | python3 {workdir}/../build_lemma_cache.py > models_{name}/Lemmatizer/lemma_cache.tsv".format(train=args.train_file, workdir=thisdir, name=args.name)) # build lemma cache
+        else:
+            status = os.system("cat {train} | python3 {workdir}/../build_lemma_cache.py > models_{name}/Lemmatizer/lemma_cache.tsv".format(train=args.train_file, workdir=thisdir, name=args.name)) # build lemma cache
         if status != 0:
             print("Lemma cache status:", status, "Training failed.", file=sys.stderr)
             sys.exit()
