@@ -10,12 +10,13 @@ SERVER_PORT=7689 #...this is docker-internal, so doesn't matter
 echo "DOCKER ENTRY HW" $tnpp_hw > /dev/stderr
 echo "DOCKER ENTRY ARGS" $* > /dev/stderr
 
-if [[ "$hw_environment" == "cpu" ]]
+if [[ "$hw_environment" == "gpu" ]]
 then
-    gpu_arg="--gpu -1"
-elif [[ "$hw_environment" == "gpu" ]]
-then
+    echo "Running in GPU"
     gpu_arg=" "
+else
+    echo "Running in CPU"
+    gpu_arg="--gpu -1"
 fi
 
 
