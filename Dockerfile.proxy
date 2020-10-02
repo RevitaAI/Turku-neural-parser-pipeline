@@ -1,0 +1,6 @@
+FROM python:3.6.11-stretch
+
+RUN pip install --upgrade pip flask requests
+COPY confidence_proxy.py /app/confidence_proxy.py
+
+CMD [ "python", "/app/confidence_proxy.py" ]

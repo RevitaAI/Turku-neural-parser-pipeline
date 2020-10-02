@@ -16,4 +16,8 @@ services:
     build: 
       dockerfile: Dockerfile.proxy
       context: .
+    volumes:
+        - ./confidence_proxy.py:/app/confidence_proxy.py
+    ports:
+      - 5000:5000
     
