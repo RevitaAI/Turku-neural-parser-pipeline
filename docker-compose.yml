@@ -7,8 +7,13 @@ services:
       context: .
     volumes:
       - .:/app
-    container_name: turku_parser
-    ports:
-      - 15000:7689
+      - F:/experiment/model_confidence/models/models_uncert_1:/app/models_uncert_1
+      - F:/experiment/model_confidence/models/models_uncert_2:/app/models_uncert_2
+      - F:/experiment/model_confidence/models/models_uncert_3:/app/models_uncert_3
     mem_limit: 5g
 
+  confidence_proxy:
+    build: 
+      dockerfile: Dockerfile.proxy
+      context: .
+    
