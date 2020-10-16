@@ -91,8 +91,15 @@ def copy_lemmatizer(args):
 
 def train_all(args):
 
-    # tokenizer --- TODO
-
+    # tokenizer
+    if args.tokenizer:
+        print("Training a tokenizer", file=sys.stderr)
+        cmd = "python3 {workdir}/../tokenizer/tokenizer_train.py --save_dir models_{name}/Tokenizer train --train_file {train_file} --devel_file {devel_file}".format(workdir=thisdir, name=args.name, train_file=args.train_file, devel_file=args.devel_file)
+        status = os.system(cmd)
+        if status != 0:
+            print("Tokenizer status:", status, "Training failed.", file=sys.stderr)
+            sys.exit()
+    
     # Tagger
     if args.tagger:
         print("Training a tagger", file=sys.stderr)
@@ -149,6 +156,7 @@ if __name__=="__main__":
     argparser.add_argument('--devel_file', type=str, required=True, help='Development data file (conllu)')
     argparser.add_argument('--embeddings', type=str, help='Word Embeddings (in word2vec text format)')
 
+    argparser.add_argument('--tokenizer', type=lambda x:bool(strtobool(x)), default=True, choices=[True, False], help='Train a tokenizer (Default:True)')
     argparser.add_argument('--tagger', type=lambda x:bool(strtobool(x)), default=True, choices=[True, False], help='Train a tagger (Default:True)')
     argparser.add_argument('--parser', type=lambda x:bool(strtobool(x)), default=True, choices=[True, False], help='Train a parser (Default:True)')
     argparser.add_argument('--lemmatizer', type=lambda x:bool(strtobool(x)), default=True, choices=[True, False], help='Train a lemmatizer (Default:True)')
