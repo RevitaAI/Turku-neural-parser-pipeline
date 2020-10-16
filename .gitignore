@@ -102,3 +102,4 @@ ENV/
 
 models_*/*
 logs/*
+*.conllu
