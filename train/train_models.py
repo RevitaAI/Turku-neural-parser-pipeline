@@ -94,7 +94,8 @@ def train_all(args):
     # tokenizer
     if args.tokenizer:
         print("Training a tokenizer", file=sys.stderr)
-        cmd = "python3 {workdir}/../tokenizer/tokenizer_train.py --save_dir models_{name}/Tokenizer train --train_file {train_file} --devel_file {devel_file}".format(workdir=thisdir, name=args.name, train_file=args.train_file, devel_file=args.devel_file)
+        #cmd = "python3 {workdir}/../tokenizer/tokenizer_train.py --save_dir models_{name}/Tokenizer train --train_file {train_file} --devel_file {devel_file}".format(workdir=thisdir, name=args.name, train_file=args.train_file, devel_file=args.devel_file)
+        cmd = "udpipe --train models_{name}/Tokenizer/tokenizer.udpipe {train_file} --heldout {devel_file}".format(workdir=thisdir, name=args.name, train_file=args.train_file, devel_file=args.devel_file)
         status = os.system(cmd)
         if status != 0:
             print("Tokenizer status:", status, "Training failed.", file=sys.stderr)
