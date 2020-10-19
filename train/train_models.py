@@ -38,6 +38,11 @@ def create_model_directory(args):
     
 
 def process_config(args):
+    with open("{config}/tokenizer.cfg".format(config=args.config_directory), "rt", encoding="utf-8") as f:
+        data=f.read()
+        data = data.replace("treebank = placeholder", "treebank = {name}".format(name=args.name))
+        with open("models_{name}/tokenizer.cfg".format(name=args.name), "wt", encoding="utf-8") as z:
+            print(data, file=z)
 
     with open("{config}/tagger.cfg".format(config=args.config_directory), "rt", encoding="utf-8") as f:
         data=f.read()
@@ -95,7 +100,10 @@ def train_all(args):
     if args.tokenizer:
         print("Training a tokenizer", file=sys.stderr)
         #cmd = "python3 {workdir}/../tokenizer/tokenizer_train.py --save_dir models_{name}/Tokenizer train --train_file {train_file} --devel_file {devel_file}".format(workdir=thisdir, name=args.name, train_file=args.train_file, devel_file=args.devel_file)
-        cmd = "udpipe --train models_{name}/Tokenizer/tokenizer.udpipe {train_file} --heldout {devel_file}".format(workdir=thisdir, name=args.name, train_file=args.train_file, devel_file=args.devel_file)
+        tokenizer_config = 'none'
+        with open('models_{name}/tokenizer.cfg'.format(name=args.name), 'r', encoding='utf-8') as f:
+            tokenizer_config = f.readline().strip()
+        cmd = "udpipe --train models_{name}/Tokenizer/tokenizer.udpipe {train_file} --heldout {devel_file} --tokenizer={tokenizer_config} --tagger=none --parser=none".format(workdir=thisdir, name=args.name, train_file=args.train_file, devel_file=args.devel_file, tokenizer_config=tokenizer_config)
         status = os.system(cmd)
         if status != 0:
             print("Tokenizer status:", status, "Training failed.", file=sys.stderr)
