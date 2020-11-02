@@ -12,6 +12,13 @@ services:
       - F:/experiment/model_confidence/models/models_uncert_2:/app/models_uncert_2
       - F:/experiment/model_confidence/models/models_uncert_3:/app/models_uncert_3
     mem_limit: 5g
+  
+  original_parser:
+    depends_on: 
+      - turku_parser
+    image: turkunlp/turku-neural-parser:latest-fi-en-sv-cpu
+    entrypoint: /bin/bash /app/docker_entry_point.sh server fi_tdt parse_plaintext
+    mem_limit: 4g
 
   confidence_proxy:
     build: 
@@ -19,8 +26,10 @@ services:
       context: .
     depends_on: 
       - turku_parser
+      - original_parser
     volumes:
       - ./confidence_proxy.py:/app/confidence_proxy.py
     ports:
       - 5000:5000
+    mem_limit: 60M
     

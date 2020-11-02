@@ -11,11 +11,12 @@ ip_address = socket.gethostbyname(hostname)
 
 app=flask.Flask(__name__)
 clusters_port = "7689"
-cluster_size = int(ip_address.split('.')[-1]) - 2 #2
+cluster_size = int(ip_address.split('.')[-1]) - 3 #2
 cluster_nodes = [
     'turku-neural-parser-pipeline_turku_parser_' + str(_)
     for _ in range(1, cluster_size + 1)
 ]
+cluster_nodes.append('turku-neural-parser-pipeline_original_parser_1')
 
 
 def to_dict(analyzed_sents: str):
@@ -52,7 +53,7 @@ def dispatch(input_tup):
         return ret
     except Exception as e:
         print(e)
-        return ''
+        return []
 
 def join_result(results: list):
     joined_sents = []
@@ -98,7 +99,7 @@ def parallel_run(text):
     result = p.map(dispatch, input_tup, chunksize=1)
     p.close()
     p.join()
-    return join_result(result)
+    return join_result([_ for _ in result if len(_)])
 
 @app.route("/",methods=["post"])
 def parse_get():
