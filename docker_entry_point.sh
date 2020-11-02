@@ -31,7 +31,7 @@ then
     ip=$(hostname -i | tr '.' '\n')
     ip=($ip)
     id=${ip[3]}
-    id=$(($id - 1))
+    id=$(($id - 2))
     echo "ID: "$id
     python3 full_pipeline_server.py $gpu_arg --host 0.0.0.0 --port $SERVER_PORT --conf-yaml models_${modelname}_${id}/pipelines.yaml $pipeline
 fi

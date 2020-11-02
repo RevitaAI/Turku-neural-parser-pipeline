@@ -16,8 +16,10 @@ services:
     build: 
       dockerfile: Dockerfile.proxy
       context: .
+    depends_on: 
+      - turku_parser
     volumes:
-        - ./confidence_proxy.py:/app/confidence_proxy.py
+      - ./confidence_proxy.py:/app/confidence_proxy.py
     ports:
       - 5000:5000
     
