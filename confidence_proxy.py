@@ -48,14 +48,14 @@ def dispatch(input_tup):
         payload, url, port = input_tup
         headers = { 'Content-Type': 'text/plain; charset=utf-8' }
         response = requests.request("POST", 'http://{}:{}'.format(url, port), 
-        headers=headers, data = payload, timeout=10)
+        headers=headers, data = payload.encode('utf-8'), timeout=30)
         ret = to_dict(response.text)
         return ret
     except Exception as e:
         print(e)
         return []
 
-def join_result(results: list):
+def join_result(results: list, model_num: int):
     joined_sents = []
     for sent_list in zip(*results):
         sent = {'text': sent_list[0]['text'], 'sent_id': sent_list[0]['sent_id'], 'tokens': []}
@@ -87,19 +87,20 @@ def join_result(results: list):
             if not is_valid:
                 sent['tokens'] = []
                 sent['error'] = 'tokenizing error'
+        sent['model_num'] = model_num
         joined_sents.append(sent)
     return joined_sents
 
 
 def parallel_run(text):
-    p = multiprocessing.Pool(cluster_size)
+    p = multiprocessing.Pool(len(cluster_nodes))
     # this needs to be declared global to mutate
     # the resultsAr defined in the enclosing scope
     input_tup = [(text, cluster_node, clusters_port) for cluster_node in cluster_nodes]
     result = p.map(dispatch, input_tup, chunksize=1)
     p.close()
     p.join()
-    return join_result([_ for _ in result if len(_)])
+    return join_result([_ for _ in result if len(_)], sum([len(_) > 0 for _ in result]))
 
 @app.route("/",methods=["post"])
 def parse_get():
